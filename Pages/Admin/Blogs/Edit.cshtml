@@ -83,6 +83,11 @@
 						<label class="form-check-label" for="isVisible">Видимость</label>
 					</div>
 
+					<div class="mb-3">
+						<label for="tags" class="form-label">Tags(,)</label>
+						<input type="text" id="tags" class="form-control" asp-for="Tags"/>	
+					</div>
+
 					<div class="mb-3 ">
 						<button class="btn btn-primary" type="submit" asp-page-handler="Edit">Изменить</button>
 						<button class="btn btn-secondary" type="reset">Сбросить</button>

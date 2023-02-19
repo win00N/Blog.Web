@@ -37,22 +37,28 @@ namespace Blog.Web.Repositories
 
 		public async Task<IEnumerable<BlogPost>> GetAllAsync()
 		{
-			return await _context.BlogPosts.ToListAsync();
+			return await _context.BlogPosts
+				.Include(nameof(BlogPost.Tags))
+				.ToListAsync();
 		}
 
 		public async Task<BlogPost> GetAsync(Guid id)
 		{
-			return await _context.BlogPosts.FindAsync(id);
+			return await _context.BlogPosts.Include(nameof(BlogPost.Tags))
+				.FirstOrDefaultAsync(x => x.BlogPostId == id);
 		}
 		public async Task<BlogPost> GetAsync(string urlHandle)
 		{
-			return await _context.BlogPosts.FirstOrDefaultAsync(
+			return await _context.BlogPosts.Include(nameof(BlogPost.Tags))
+				.FirstOrDefaultAsync(
 				x => x.UrlHandle == urlHandle);
 		}
 
 		public async Task<BlogPost> UpdateAsync(BlogPost blogPost)
 		{
-			var existingBlogPost = await _context.BlogPosts.FindAsync(blogPost.BlogPostId);
+			var existingBlogPost = await _context.BlogPosts
+				.Include(nameof(BlogPost.Tags))
+				.FirstOrDefaultAsync(x => x.BlogPostId == blogPost.BlogPostId);
 
 			if (existingBlogPost != null)
 			{
@@ -65,6 +71,17 @@ namespace Blog.Web.Repositories
 				existingBlogPost.PublishDate = blogPost.PublishDate;
 				existingBlogPost.Author = blogPost.Author;
 				existingBlogPost.Visible = blogPost.Visible;
+
+				if (blogPost.Tags != null && blogPost.Tags.Any())
+				{
+					// delete existing tags
+					_context.Tags.RemoveRange(existingBlogPost.Tags);
+
+					// add new tags
+					blogPost.Tags.ToList()
+						.ForEach(x => x.BlogPostId = existingBlogPost.BlogPostId);
+					await _context.Tags.AddRangeAsync(blogPost.Tags);
+				}
 
 			}
 

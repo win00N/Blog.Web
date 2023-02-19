@@ -19,6 +19,9 @@ namespace Blog.Web.Pages.Admin.Blogs
         [BindProperty]
         public IFormFile FeaturedImage { get; set; }
 
+        [BindProperty]
+        public string Tags { get; set; }
+
         public AddModel(IBlogPostRepository blogPostRepository)
         {
 			_blogPostRepository = blogPostRepository;
@@ -41,6 +44,8 @@ namespace Blog.Web.Pages.Admin.Blogs
                 PublishDate = AddBlogPostRequest.PublishDate,
                 Author = AddBlogPostRequest.Author,
                 Visible = AddBlogPostRequest.Visible,
+                Tags = new List<Tag>(Tags.Split(',')
+                .Select(x => new Tag() { Name = x.Trim()}))
             };
 
             await _blogPostRepository.AddAsync(blogPost);
