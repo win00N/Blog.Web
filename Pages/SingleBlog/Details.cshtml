@@ -1,0 +1,29 @@
+﻿@page "/blog/{urlHandle}"
+@model Blog.Web.Pages.SingleBlog.DetailsModel
+@{
+	ViewData["Title"] = Model.BlogPost.PageTitle;
+}
+
+<div class="container my-5">
+	<div class="row justify-content-center">
+		<div class="col-12 col-lg-6">
+			@if (Model.BlogPost != null)
+			{
+				<h1 class="mb-3">@Model.BlogPost.Heading</h1>
+
+				<div class="d-flex justify-content-between mb-3">
+					<span class="text-secondary">Автор: @Model.BlogPost.Author</span>
+					<span class="text-secondary">Дата: @Model.BlogPost.PublishDate.ToString("dd:MM:yyyy")</span>
+				</div>
+				<img src="@Model.BlogPost.FeaturedImageUrl" class="d-block img-fluid mb-3"/>
+				<div class="mb-3 blog-details">
+					@Html.Raw(Model.BlogPost.Content);
+				</div>
+			}
+			else
+			{
+				<h2>Блог не найден</h2>
+			}
+		</div>
+	</div>
+</div>

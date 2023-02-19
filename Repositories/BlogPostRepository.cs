@@ -20,6 +20,7 @@ namespace Blog.Web.Repositories
 			return blogPost;
 		}
 
+
 		public async Task<bool> DeleteAsync(Guid id)
 		{
 			var existingBlogPost = await _context.BlogPosts.FindAsync(id);
@@ -42,6 +43,11 @@ namespace Blog.Web.Repositories
 		public async Task<BlogPost> GetAsync(Guid id)
 		{
 			return await _context.BlogPosts.FindAsync(id);
+		}
+		public async Task<BlogPost> GetAsync(string urlHandle)
+		{
+			return await _context.BlogPosts.FirstOrDefaultAsync(
+				x => x.UrlHandle == urlHandle);
 		}
 
 		public async Task<BlogPost> UpdateAsync(BlogPost blogPost)

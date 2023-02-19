@@ -16,3 +16,13 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.btn-details {
+    background-color: cornflowerblue;
+    border: none;
+    color: black;
+}
+
+.blog-details img {
+    max-width: 100%;
+}
