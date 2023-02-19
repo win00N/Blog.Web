@@ -1,0 +1,43 @@
+﻿@page
+@model Blog.Web.Pages.RegisterModel
+@{
+}
+
+<div class="container mx-auto">
+	<div class="row justify-content-center">
+		<div class="col-12 col-lg-6">
+
+
+			<h1 class="mt-5 mb-3 h3">
+				Регистрация
+			</h1>
+			<partial name="_Notification">
+
+			<form method="post">
+				<div class="mb-3">
+					<label class="form-label">
+						Логин
+					</label>
+					<input type="text" class="form-control" asp-for="RegisterViewModel.Login"/>
+				</div>
+				<div class="mb-3">
+					<label class="form-label">
+						Email
+					</label>
+					<input type="email" class="form-control" asp-for="RegisterViewModel.Email" />
+				</div>
+				<div class="mb-3">
+					<label class="form-label">
+						Пароль
+					</label>
+					<input type="password" class="form-control" asp-for="RegisterViewModel.Password" />
+				</div>
+
+				<div class="mb-3">
+					<button class="btn btn-primary text-light" type="submit">Регистрация</button>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<IdentityUser> signInManager
+
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 	<meta charset="utf-8" />
@@ -8,7 +11,7 @@
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/Blog.Web.styles.css" asp-append-version="true" />
-	
+
 	<!--froala-->
 	<link href='https://cdn.jsdelivr.net/npm/froala-editor@latest/css/froala_editor.pkgd.min.css' rel='stylesheet' type='text/css' />
 	<script type='text/javascript' src='https://cdn.jsdelivr.net/npm/froala-editor@latest/js/froala_editor.pkgd.min.js'></script>
@@ -25,21 +28,42 @@
 				</button>
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 					<ul class="navbar-nav flex-grow-1">
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-							   aria-expanded="false" id="navbarDropdownAdmin">
-								Admin
-							</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a class="dropdown-item" aria-labelledby="navbarDropdownAdmin" href="/admin/blogs/add">Создать пост</a>
-								</li>
-								<li>
-									<a class="dropdown-item" aria-labelledby="navbarDropdownAdmin" href="/admin/blogs/list">Все посты</a>
-								</li>
-							</ul>
-						</li>
+						
+						@if (signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+						{
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+								   aria-expanded="false" id="navbarDropdownAdmin">
+									Admin
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item" aria-labelledby="navbarDropdownAdmin" href="/admin/blogs/add">Создать пост</a>
+									</li>
+									<li>
+										<a class="dropdown-item" aria-labelledby="navbarDropdownAdmin" href="/admin/blogs/list">Все посты</a>
+									</li>
+								</ul>
+							</li>
+						}
+
 					</ul>
+					<div class="d-flex justify-content-between align-items-center">
+
+						@if (signInManager.IsSignedIn(User))
+						{
+							<div class="me-3 text-light ">
+								@User?.Identity?.Name
+							</div>
+							<a class="btn bg-light text-dark me-3" href="/logout">Выйти</a>
+						}
+						else
+						{
+							<a class="btn bg-light text-dark me-3" href="/login">Войти</a>
+							<a class="btn bg-light text-dark me-3" href="/register">Регистрация</a>
+						}
+					</div>
+
 				</div>
 			</div>
 		</nav>

@@ -1,0 +1,39 @@
+﻿@page
+@model Blog.Web.Pages.LoginModel
+@{
+}
+
+<div class="container mx-auto">
+	<div class="row justify-content-center">
+		<div class="col-12 col-lg-6">
+
+
+			<h1 class="mt-5 mb-3 h3">
+				Авторизация
+			</h1>
+			<partial name="_Notification">
+
+			<form method="post">
+				<div class="mb-3">
+					<label class="form-label">
+						Логин
+					</label>
+						<input type="text" class="form-control" asp-for="LoginViewModel.Username" />
+				</div>
+				
+				<div class="mb-3">
+					<label class="form-label">
+						Пароль
+					</label>
+						<input type="password" class="form-control" asp-for="LoginViewModel.Password" />
+				</div>
+
+				<div class="mb-3">
+					<button class="btn btn-primary text-light" type="submit">Войти</button>
+					<a href="/register" class="btn btn-secondary text-light">Регистрация</a>
+				</div>
+
+			</form>
+		</div>
+	</div>
+</div>
