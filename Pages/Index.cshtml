@@ -1,0 +1,59 @@
+﻿@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+
+
+<div class="container col-xxl-8 px-4 py-5 mb-5">
+	<div class="row align-items-center g-5 py-5">
+		<div class="col-12 col-lg-6">
+			<h1 class="display-5 fw-bold lh-1 mb-3">
+				Blog - Мой блог
+			</h1>
+			<p class="lead">
+				Блог о технологиях которые мне интересны
+				и которыми я хотел бы поделиться с вами.<br />
+				Блог в основном про: html, css, js,
+				c# .net, asp.net, bootstrap, ef core, sql и т.д.
+			</p>
+		</div>
+		<div class="col-12 col-lg-6">
+			<img src="https://images.pexels.com/photos/113850/pexels-photo-113850.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+				 class="d-block mx-lg-auto img-fluid" width="400" />
+		</div>
+
+	</div>
+</div>
+
+<div class="container">
+	<div class="row justify-content-center">
+		<div class="col-6">
+
+			<h2 class="mt-5 mb-5 display-3">Все блоги</h2>
+
+			@if (Model.Blogs != null && Model.Blogs.Any())
+			{
+				foreach (var blog in Model.Blogs)
+				{
+					<div class="mb-5 bg-light box-shadow">
+						<img src="@blog.FeaturedImageUrl" alt="@blog.Heading" class="mb-2 d-block img-fluid" />
+						<div class="px-4 py-4">
+							<h2 class="mb-2">@blog.Heading</h2>
+							<p>
+								Автор: @blog.Author
+								<br />
+								Дата: @blog.PublishDate.ToShortDateString()
+								<br />
+							</p>
+							<p class="mb-2">
+								Краткое описание: @blog.ShortDescription
+							</p>
+							<a href="/blog/@blog.UrlHandle" class="btn btn-dark">Подробнее</a>
+						</div>
+					</div>
+				}
+			}
+		</div>
+	</div>
+</div>
