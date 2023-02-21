@@ -1,0 +1,138 @@
+﻿@page
+@model Blog.Web.Pages.Admin.Users.IndexModel
+@{
+}
+
+<div class="bg-secondary bg-opacity-10 py-2 mb-5">
+	<div class="container">
+		<h1 class="mt-5">Все пользователи</h1>
+		<hr />
+	</div>
+</div>
+
+<div class="container mt-5">
+
+	<div class="mb-3 d-flex justify-content-end">
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+			Создать пользователя
+		</button>
+	</div>
+
+	<form method="post" asp-page-handler="delete" id="deleteUserForm">
+		@if (Model.Users != null && Model.Users.Any())
+		{
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>UserName</th>
+						<th>Email</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var user in Model.Users)
+					{
+						<tr>
+							<td>@user.UserId</td>
+							<td>@user.UserName</td>
+							<td>@user.Email</td>
+							<td>
+								<a class="btn btn-danger user-delete-btn"
+						   data-id="@user.UserId">Удалить</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<input type="hidden" asp-for="SelectedUserId" id="selectedUserId" />
+		}
+		else
+		{
+			<div class="container">
+				<p>Пользователей не найдено</p>
+			</div>
+		}
+	</form>
+
+</div>
+
+<form method="post">
+	<!-- Modal -->
+	<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Создать пользователя</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+				</div>
+				<div class="modal-body">
+					<div class="mb-3">
+						<label class="form-label">Логин</label>
+						<input type="text" class="form-control"
+							   asp-for="AddUserRequest.UserName" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Email</label>
+						<input type="email" class="form-control"
+							   asp-for="AddUserRequest.Email" />
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Пароль</label>
+						<input type="password" class="form-control"
+							   asp-for="AddUserRequest.Password" />
+					</div>
+					<div class="mb-3">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox"
+								   value="User" checked disabled>
+							<label class="form-check-label" for="flexCheckDefault">
+								User_Role
+							</label>
+						</div>
+
+						@if (User.IsInRole("SuperAdmin"))
+						{
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox"
+								   asp-for="AddUserRequest.AdminCheckbox"
+								   id="admin_role" />
+								<label class="form-check-label" for="admin_role">
+									Admin_Role
+								</label>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+					<button type="submit" class="btn btn-dark">Сохранить</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+
+@section Scripts {
+	<script>
+
+		const userDeleteElements = document.querySelectorAll('.user-delete-btn');
+		const selectedUserIdElement = document.getElementById('selectedUserId');
+		const deleteUserFormElement = document.getElementById('deleteUserForm');
+
+		userDeleteElements.forEach((element) => {
+			element.addEventListener('click', function () {
+
+				const userId = element.dataset.id;
+
+				selectedUserIdElement.value = userId;
+				deleteUserFormElement.submit();
+
+			})
+		})
+	</script>
+}
+
+
