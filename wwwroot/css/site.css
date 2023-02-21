@@ -26,3 +26,7 @@ body {
 .blog-details img {
     max-width: 100%;
 }
+
+.change-color {
+    color: red;
+}

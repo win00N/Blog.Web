@@ -1,5 +1,10 @@
 ﻿@page "/blog/{urlHandle}"
 @model Blog.Web.Pages.SingleBlog.DetailsModel
+
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> userManager
+@inject SignInManager<IdentityUser> signInManager
+
 @{
 	ViewData["Title"] = Model.BlogPost.PageTitle;
 }
@@ -17,6 +22,31 @@
 				</div>
 
 				<div class="mb-3">
+					<span>
+						@if (signInManager.IsSignedIn(User))
+						{
+							@if (Model.Liked)
+							{
+								<a style="cursor: pointer">
+									<i class="bi change-color bi-heart-fill"></i>
+								</a>
+							}
+							else
+							{
+								<a id="btnLike" style="cursor: pointer">
+									<i class="bi bi-heart"></i>
+								</a>
+							}
+						}
+
+						<span id="totalLikes">
+							@Model.TotalLikes
+						</span>
+						лайков
+					</span>
+				</div>
+
+				<div class="mb-3">
 					@if (Model.BlogPost.Tags != null)
 					{
 						foreach (var tag in Model.BlogPost.Tags)
@@ -29,7 +59,7 @@
 				</div>
 
 
-				<img src="@Model.BlogPost.FeaturedImageUrl" class="d-block img-fluid mb-3"/>
+				<img src="@Model.BlogPost.FeaturedImageUrl" class="d-block img-fluid mb-3" />
 				<div class="mb-3 blog-details">
 					@Html.Raw(Model.BlogPost.Content)
 				</div>
@@ -41,3 +71,47 @@
 		</div>
 	</div>
 </div>
+
+@section Scripts {
+	<script>
+		const btnLike = document.getElementById('btnLike');
+		const totalLikesElement = document.getElementById('totalLikes');
+
+		async function getTotalLikes() {
+
+			fetch('/api/blogpostlike/@Model.BlogPost.BlogPostId/totalLikes', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': '*/*'
+				},
+			})
+				.then(data => data.json())
+				.then(result => totalLikesElement.innerHTML = result);
+		}
+
+		async function addLikeForBlog() {
+
+			fetch('/api/blogpostlike/add', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': '*/*'
+				},
+				body: JSON.stringify({
+					blogPostId: '@Model.BlogPost.BlogPostId',
+					userId: '@userManager.GetUserId(User)'
+				})
+			})
+				.then(() => {
+					btnLike.innerHTML = '<i class="bi change-color bi-heart-fill"></i>';
+					btnLike.removeEventListener('click', addLikeForBlog);
+					getTotalLikes();
+
+				});
+		}
+
+		btnLike.addEventListener('click', addLikeForBlog);
+
+	</script>
+}
