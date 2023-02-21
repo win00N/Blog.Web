@@ -63,6 +63,55 @@
 				<div class="mb-3 blog-details">
 					@Html.Raw(Model.BlogPost.Content)
 				</div>
+
+				<div class="card mt-5">
+					<div class="card-header">
+						<h5>Комментарии</h5>
+
+						@if (signInManager.IsSignedIn(User))
+						{
+							<form method="post">
+								<div class="mb-3">
+									<label class="form-label">Описание комментария</label>
+									<input type="text" class="form-control" asp-for="CommentDescription">
+								</div>
+								<div class="mb-3">
+									<button type="submit" class="btn btn-dark">Добавить комментарий</button>
+									<input type="hidden" asp-for="BlogPostId" />
+								</div>
+							</form>
+						}
+
+
+					</div>
+					<div class="card-body">
+						@if (Model.Comments != null && Model.Comments.Any())
+						{
+							@foreach (var comment in Model.Comments)
+							{
+								<div class="card mb-3">
+									<div class="card-body">
+										<div>
+											@comment.Description
+										</div>
+										<div class="d-flex justify-content-between">
+											<span class="text-secondary">@comment.UserName</span>
+											<span class="text-secondary">@comment.DateAdded.ToShortTimeString()</span>
+										</div>
+										<div class="text-end">
+											<span class="text-secondary">@comment.DateAdded.ToShortDateString()</span>
+										</div>
+									</div>
+								</div>
+							}
+						}
+						else
+						{
+							<p>Нет комментарий</p>
+						}
+					</div>
+				</div>
+
 			}
 			else
 			{
@@ -71,6 +120,7 @@
 		</div>
 	</div>
 </div>
+
 
 @section Scripts {
 	<script>

@@ -30,3 +30,7 @@ body {
 .change-color {
     color: red;
 }
+
+.change-color-nav-bar {
+    background-color: #0269A4;
+}
