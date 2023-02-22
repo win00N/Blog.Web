@@ -20,26 +20,31 @@
 				<form method="post">
 					<div class="mb-3">
 						<label for="heading" class="form-label">Id</label>
-						<input type="text" id="heading" class="form-control" readonly asp-for="BlogPost.BlogPostId">
+						<input type="text" required id="heading" class="form-control" readonly asp-for="BlogPost.BlogPostId">
+						<span class="text-danger" asp-validation-for="BlogPost.BlogPostId"></span>
 					</div>
 					<div class="mb-3">
 						<label for="heading" class="form-label">Заголовок</label>
-						<input type="text" id="heading" class="form-control" asp-for="BlogPost.Heading">
+						<input type="text" required id="heading" class="form-control" asp-for="BlogPost.Heading">
+						<span class="text-danger" asp-validation-for="BlogPost.Heading"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="pageTitle" class="form-label">Заголовок страницы</label>
-						<input type="text" id="pageTitle" class="form-control" asp-for="BlogPost.PageTitle">
+						<input type="text" required id="pageTitle" class="form-control" asp-for="BlogPost.PageTitle">
+						<span class="text-danger" asp-validation-for="BlogPost.PageTitle"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="content" class="form-label">Контент</label>
-						<textarea class="form-control" id="content" asp-for="BlogPost.Content"></textarea>
+						<textarea class="form-control" required id="content" asp-for="BlogPost.Content"></textarea>
+						<span class="text-danger" asp-validation-for="BlogPost.Content"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="shortDescription" class="form-label">Краткое описание</label>
-						<input type="text" id="shortDescription" class="form-control" asp-for="BlogPost.ShortDescription">
+						<input type="text" id="shortDescription" required class="form-control" asp-for="BlogPost.ShortDescription">
+						<span class="text-danger" asp-validation-for="BlogPost.ShortDescription"></span>
 					</div>
 
 					<div class="mb-3">
@@ -60,32 +65,37 @@
 
 					<div class="mb-3">
 						<label for="imageUrl" class="form-label">Фото(Url)</label>
-						<input type="text" id="imageUrl" class="form-control" asp-for="BlogPost.FeaturedImageUrl">
+						<input type="text" required id="imageUrl" class="form-control" asp-for="BlogPost.FeaturedImageUrl">
+						<span class="text-danger" asp-validation-for="BlogPost.FeaturedImageUrl"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="url" class="form-label">Url</label>
-						<input type="text" id="url" class="form-control" asp-for="BlogPost.UrlHandle">
+						<input type="text" id="url" required class="form-control" asp-for="BlogPost.UrlHandle">
+						<span class="text-danger" asp-validation-for="BlogPost.UrlHandle"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="publishedDate" class="form-label">Дата публикации</label>
-						<input type="date" id="publishedDate" class="form-control" asp-for="BlogPost.PublishDate">
+						<input type="date" id="publishedDate" required class="form-control" asp-for="BlogPost.PublishDate">
+						<span class="text-danger" asp-validation-for="BlogPost.PublishDate"></span>
 					</div>
 
 					<div class="mb-3">
 						<label for="author" class="form-label">Автор</label>
-						<input type="text" id="author" class="form-control" asp-for="BlogPost.Author">
+						<input type="text" id="author" required class="form-control" asp-for="BlogPost.Author">
+						<span class="text-danger" asp-validation-for="BlogPost.Author"></span>
 					</div>
 
 					<div class="form-check mb-3">
-						<input class="form-check-input" type="checkbox" id="isVisible" asp-for="BlogPost.Visible" />
+						<input class="form-check-input" required type="checkbox" id="isVisible" asp-for="BlogPost.Visible" />
 						<label class="form-check-label" for="isVisible">Видимость</label>
 					</div>
 
 					<div class="mb-3">
 						<label for="tags" class="form-label">Tags(,)</label>
-						<input type="text" id="tags" class="form-control" asp-for="Tags"/>	
+						<input type="text" id="tags" required class="form-control" asp-for="Tags" />
+						<span class="text-danger" asp-validation-for="Tags"></span>
 					</div>
 
 					<div class="mb-3 ">

@@ -8,76 +8,88 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Blog.Web.Pages.Admin.Users
 {
-    [Authorize(Roles = "Admin")]
-    public class IndexModel : PageModel
-    {
+	[Authorize(Roles = "Admin")]
+	public class IndexModel : PageModel
+	{
 		private readonly IUserRepository _userRepository;
 
-        public List<User> Users { get; set; }
-        
-        [BindProperty]
-        public AddUser AddUserRequest { get; set; }
+		public List<User> Users { get; set; }
 
-        [BindProperty]
-        public Guid SelectedUserId { get; set; }
+		[BindProperty]
+		public AddUser AddUserRequest { get; set; }
 
-        public IndexModel(IUserRepository userRepository)
-        {
+		[BindProperty]
+		public Guid SelectedUserId { get; set; }
+
+		public IndexModel(IUserRepository userRepository)
+		{
 			_userRepository = userRepository;
 		}
 
-        public async Task<IActionResult> OnGet()
-        {
-            var users = await _userRepository.GetAll();
+		public async Task<IActionResult> OnGet()
+		{
+			await GetUsers();
+			return Page();
+		}
 
-            Users = new List<User>();
+		public async Task<IActionResult> OnPost()
+		{
 
-            foreach (var user in users)
-            {
-                Users.Add(new User
-                {
-                    UserId = Guid.Parse(user.Id),
-                    UserName = user.UserName,
-                    Email = user.Email,
-                });
+			if (ModelState.IsValid)
+			{
+				var identityUser = new IdentityUser
+				{
+					UserName = AddUserRequest.UserName,
+					Email = AddUserRequest.Email
+				};
+
+				var roles = new List<string>
+			{
+				"User",
+			};
+
+				if (AddUserRequest.AdminCheckbox)
+				{
+					roles.Add("Admin");
+				}
+
+				var result = await _userRepository
+					.Add(identityUser, AddUserRequest.Password, roles);
+
+				if (result)
+				{
+					return RedirectToPage("/Admin/Users/Index");
+				}
+
+				return Page();
 			}
 
-            return Page();
-        }
+			await GetUsers();
+			return Page();
+		}
 
-        public async Task<IActionResult> OnPost()
-        {
-            var identityUser = new IdentityUser
-            {
-                UserName = AddUserRequest.UserName,
-                Email = AddUserRequest.Email
-            };
-
-            var roles = new List<string>
-            {
-                "User",
-            };
-
-            if (AddUserRequest.AdminCheckbox)
-            {
-                roles.Add("Admin");
-            }
-
-            var result = await _userRepository
-                .Add(identityUser, AddUserRequest.Password, roles);
-        
-            if (result)
-            {
-                return RedirectToPage("/Admin/Users/Index");
-            }
-
-            return Page();
-        }
-
-        public async Task<IActionResult> OnPostDelete()
-        {
-            await _userRepository.Delete(SelectedUserId);
+		public async Task<IActionResult> OnPostDelete()
+		{
+			await _userRepository.Delete(SelectedUserId);
 			return RedirectToPage("/Admin/Users/Index");
 		}
-    }
+
+		private async Task GetUsers()
+		{
+			var users = await _userRepository.GetAll();
+
+			Users = new List<User>();
+
+			foreach (var user in users)
+			{
+				Users.Add(new User
+				{
+					UserId = Guid.Parse(user.Id),
+					UserName = user.UserName,
+					Email = user.Email,
+				});
+			}
+
+		}
+	}
 }

@@ -18,25 +18,27 @@
 						<label class="form-label">
 							Логин
 						</label>
-						<input required type="text" class="form-control" asp-for="RegisterViewModel.Login" />
+						<input type="text" class="form-control" asp-for="RegisterViewModel.Login" required />
+						<span class="text-danger" asp-validation-for="RegisterViewModel.Login"></span>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">
 							Email
 						</label>
-						<input required type="email" class="form-control" asp-for="RegisterViewModel.Email" />
+						<input type="email" class="form-control" asp-for="RegisterViewModel.Email" required />
+						<span class="text-danger" asp-validation-for="RegisterViewModel.Email"></span>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">
 							Пароль
 						</label>
-						<input required type="password" class="form-control" asp-for="RegisterViewModel.Password" />
+						<input type="password" class="form-control" asp-for="RegisterViewModel.Password" required minlength="4"/>
+						<span class="text-danger" asp-validation-for="RegisterViewModel.Password"></span>
 					</div>
 
 					<div class="mb-3">
 						<button class="btn btn-primary text-light" type="submit">Регистрация</button>
 					</div>
-
 				</form>
 		</div>
 	</div>

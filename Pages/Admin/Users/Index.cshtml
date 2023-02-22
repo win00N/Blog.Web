@@ -71,17 +71,20 @@
 					<div class="mb-3">
 						<label class="form-label">Логин</label>
 						<input type="text" class="form-control"
-							   asp-for="AddUserRequest.UserName" />
+							   asp-for="AddUserRequest.UserName" required/>
+						<span class="text-danger" asp-validation-for="AddUserRequest.UserName"></span>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Email</label>
 						<input type="email" class="form-control"
-							   asp-for="AddUserRequest.Email" />
+							   asp-for="AddUserRequest.Email" required/>
+						<span class="text-danger" asp-validation-for="AddUserRequest.Email"></span>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Пароль</label>
 						<input type="password" class="form-control"
-							   asp-for="AddUserRequest.Password" />
+							   asp-for="AddUserRequest.Password" required minlength="4"/>
+						<span class="text-danger" asp-validation-for="AddUserRequest.Password"></span>
 					</div>
 					<div class="mb-3">
 						<div class="form-check">

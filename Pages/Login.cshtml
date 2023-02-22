@@ -18,14 +18,16 @@
 					<label class="form-label">
 						Логин
 					</label>
-						<input type="text" class="form-control" asp-for="LoginViewModel.Username" />
+						<input required type="text" class="form-control" asp-for="LoginViewModel.Username" />
+						<span class="text-danger" asp-validation-for="LoginViewModel.Username"></span>
 				</div>
 				
 				<div class="mb-3">
 					<label class="form-label">
 						Пароль
 					</label>
-						<input type="password" class="form-control" asp-for="LoginViewModel.Password" />
+						<input required type="password" class="form-control" asp-for="LoginViewModel.Password" minlength="4"/>
+						<span class="text-danger" asp-validation-for="LoginViewModel.Password"></span>
 				</div>
 
 				<div class="mb-3">

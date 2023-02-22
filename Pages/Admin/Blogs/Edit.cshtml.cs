@@ -5,6 +5,7 @@ using Blog.Web.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 
 namespace Blog.Web.Pages.Admin.Blogs
@@ -15,12 +16,13 @@ namespace Blog.Web.Pages.Admin.Blogs
 		private readonly IBlogPostRepository _blogPostRepository;
 
 		[BindProperty]
-		public BlogPost BlogPost { get; set; }
+		public EditBlogPostRequest BlogPost { get; set; }
 
 		[BindProperty]
 		public IFormFile FeaturedImage { get; set; }
-		
+
 		[BindProperty]
+		[Required]
 		public string Tags { get; set; }
 
 
@@ -31,37 +33,72 @@ namespace Blog.Web.Pages.Admin.Blogs
 
 		public async Task OnGet(Guid id)
 		{
-			BlogPost = await _blogPostRepository.GetAsync(id);
-			
-			if (BlogPost != null && BlogPost.Tags != null)
+			var blogPostDomainModel = await _blogPostRepository.GetAsync(id);
+
+			if (blogPostDomainModel != null && blogPostDomainModel.Tags != null)
 			{
-				Tags = string.Join(',', BlogPost.Tags.Select(x => x.Name));
+				BlogPost = new EditBlogPostRequest
+				{
+					BlogPostId = blogPostDomainModel.BlogPostId,
+					Heading = blogPostDomainModel.Heading,
+					PageTitle = blogPostDomainModel.PageTitle,
+					Content = blogPostDomainModel.Content,
+					ShortDescription = blogPostDomainModel.ShortDescription,
+					FeaturedImageUrl = blogPostDomainModel.FeaturedImageUrl,
+					UrlHandle = blogPostDomainModel.UrlHandle,
+					PublishDate = blogPostDomainModel.PublishDate,
+					Author = blogPostDomainModel.Author,
+					Visible = blogPostDomainModel.Visible
+				};
+
+				Tags = string.Join(',', blogPostDomainModel.Tags.Select(x => x.Name));
 			}
 		}
 
 		public async Task<IActionResult> OnPostEdit()
 		{
-			try
+			ValidateEditBlogPost();
+
+			if (ModelState.IsValid)
 			{
-				BlogPost.Tags = new List<Tag>(Tags.Split(',')
-					.Select(x => new Tag() { Name = x.Trim()}));
-
-				await _blogPostRepository.UpdateAsync(BlogPost);
-
-				ViewData["Notification"] = new Notification
+				try
 				{
-					Message = "Изменения успешно сохранены",
-					Type = Enums.NotificationType.Success
-				};
+					var blogPostDomainModel = new BlogPost
+					{
+						BlogPostId = BlogPost.BlogPostId,
+						Heading = BlogPost.Heading,
+						PageTitle = BlogPost.PageTitle,
+						Content = BlogPost.Content,
+						ShortDescription = BlogPost.ShortDescription,
+						FeaturedImageUrl = BlogPost.FeaturedImageUrl,
+						UrlHandle = BlogPost.UrlHandle,
+						PublishDate = BlogPost.PublishDate,
+						Author = BlogPost.Author,
+						Visible = BlogPost.Visible,
+						Tags = new List<Tag>(Tags.Split(',')
+						.Select(x => new Tag() { Name = x.Trim() }))
+					};
 
-			}
-			catch (Exception ex)
-			{
-				ViewData["Notification"] = new Notification
+
+					await _blogPostRepository.UpdateAsync(blogPostDomainModel);
+
+					ViewData["Notification"] = new Notification
+					{
+						Message = "Изменения успешно сохранены",
+						Type = Enums.NotificationType.Success
+					};
+
+				}
+				catch (Exception ex)
 				{
-					Message = $"Произошла ошибка {ex.Message}",
-					Type = Enums.NotificationType.Error
-				};
+					ViewData["Notification"] = new Notification
+					{
+						Message = $"Произошла ошибка {ex.Message}",
+						Type = Enums.NotificationType.Error
+					};
+				}
+
+				return Page();
 			}
 
 			return Page();
@@ -71,7 +108,7 @@ namespace Blog.Web.Pages.Admin.Blogs
 		{
 
 			var deleted = await _blogPostRepository.DeleteAsync(BlogPost.BlogPostId);
-				
+
 			if (deleted)
 			{
 				var notification = new Notification
@@ -84,6 +121,23 @@ namespace Blog.Web.Pages.Admin.Blogs
 			}
 
 			return Page();
+		}
+
+		// Custom validation
+		private void ValidateEditBlogPost()
+		{
+			if (!string.IsNullOrWhiteSpace(BlogPost.Heading))
+			{
+				// check minLength
+				if (BlogPost.Heading.Length < 8 || BlogPost.Heading.Length > 72)
+				{
+					ModelState.AddModelError("BlogPost.Heading",
+						"Заголовок может быть от 8 до 72 символов");
+				}
+
+
+				// check maxLength
+			}
 		}
 	}
 }

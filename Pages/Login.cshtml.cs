@@ -22,32 +22,36 @@ namespace Blog.Web.Pages
 
         }
 
-        public async Task<IActionResult> OnPost(string ReturnUrl)
+        public async Task<IActionResult> OnPost(string? ReturnUrl)
         {
-            var signInResult = await _signInManager.PasswordSignInAsync(
-                LoginViewModel.Username,
-                LoginViewModel.Password,
-                false,
-                false);
-
-            if (signInResult.Succeeded)
+            if (ModelState.IsValid)
             {
-                if (!string.IsNullOrWhiteSpace(ReturnUrl))
-                    return RedirectToPage(ReturnUrl);
+                var signInResult = await _signInManager.PasswordSignInAsync(
+                    LoginViewModel.Username,
+                    LoginViewModel.Password,
+                    false,
+                    false);
 
-                return RedirectToPage("Index");
-            }
-            else
-            {
-                ViewData["Notification"] = new Notification
+                if (signInResult.Succeeded)
                 {
-                    Type = Enums.NotificationType.Error,
-                    Message = "Попробуйте снова. Не удалось войти"
-                };
+                    if (!string.IsNullOrWhiteSpace(ReturnUrl))
+                        return RedirectToPage(ReturnUrl);
 
-                return Page();
+                    return RedirectToPage("Index");
+                }
+                else
+                {
+                    ViewData["Notification"] = new Notification
+                    {
+                        Type = Enums.NotificationType.Error,
+                        Message = "Попробуйте снова. Не удалось войти"
+                    };
+
+                    return Page();
+                }
             }
 
+            return Page();
 		}
     }
 }

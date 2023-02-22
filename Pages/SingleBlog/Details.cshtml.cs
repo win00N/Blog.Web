@@ -5,6 +5,7 @@ using Blog.Web.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations;
 
 namespace Blog.Web.Pages.SingleBlog
 {
@@ -25,6 +26,9 @@ namespace Blog.Web.Pages.SingleBlog
 		public Guid BlogPostId { get; set; }
 
 		[BindProperty]
+		[Required]
+		[MinLength(1)]
+		[MaxLength(120)]
 		public string CommentDescription { get; set; }
 
 
@@ -44,6 +48,60 @@ namespace Blog.Web.Pages.SingleBlog
 
 		public async Task<IActionResult> OnGet(string urlHandle)
 		{
+			await GetBlog(urlHandle);
+			return Page();
+		}
+
+
+		public async Task<IActionResult> OnPost(string urlHandle)
+		{
+			if (ModelState.IsValid)
+			{
+				if (_signInManager.IsSignedIn(User)
+				&& !string.IsNullOrWhiteSpace(CommentDescription))
+				{
+					var userId = _userManager.GetUserId(User);
+
+					var comment = new BlogPostComment
+					{
+						BlogPostId = this.BlogPostId,
+						Description = CommentDescription,
+						DateAdded = DateTime.Now,
+						UserId = Guid.Parse(userId)
+					};
+
+					await _blogPostCommentRepository.AddAsync(comment);
+				}
+
+				return RedirectToPage("/SingleBlog/Details", new { urlHandle = urlHandle });
+			}
+
+
+			await GetBlog(urlHandle); 
+			return Page();
+		}
+
+		private async Task GetComments()
+		{
+			var blogPostComments = await _blogPostCommentRepository.GetAllAsync(BlogPost.BlogPostId);
+
+			var blogCommentsViewModel = new List<BlogComment>();
+
+			foreach (var blogPostComment in blogPostComments)
+			{
+				blogCommentsViewModel.Add(new BlogComment
+				{
+					DateAdded = blogPostComment.DateAdded,
+					Description = blogPostComment.Description,
+					UserName = (await _userManager.FindByIdAsync(blogPostComment.UserId.ToString())).UserName,
+				});
+			}
+
+			Comments = blogCommentsViewModel;
+		}
+
+		private async Task GetBlog(string urlHandle)
+		{
 			BlogPost = await _blogPostRepository.GetAsync(urlHandle);
 
 			if (BlogPost != null)
@@ -56,58 +114,14 @@ namespace Blog.Web.Pages.SingleBlog
 					var userId = _userManager.GetUserId(User);
 
 					Liked = likes.Any(x => x.UserId == Guid.Parse(userId));
-					
+
 					await GetComments();
 
 				}
 
-
 				TotalLikes = await _blogPostLikeRepository
 					.GetTotalLikesForBlog(BlogPost.BlogPostId);
 			}
-
-			return Page();
-		}
-
-
-		public async Task<IActionResult> OnPost(string urlHandle)
-		{
-			if (_signInManager.IsSignedIn(User) 
-				&& !string.IsNullOrWhiteSpace(CommentDescription))
-			{
-				var userId = _userManager.GetUserId(User);
-
-				var comment = new BlogPostComment
-				{
-					BlogPostId = this.BlogPostId,
-					Description = CommentDescription,
-					DateAdded = DateTime.Now,
-					UserId = Guid.Parse(userId)
-				};
-
-				await _blogPostCommentRepository.AddAsync(comment);
-			}
-
-			return RedirectToPage("/SingleBlog/Details", new { urlHandle = urlHandle });
-		}
-
-		private async Task GetComments()
-		{
-			var blogPostComments = await _blogPostCommentRepository.GetAllAsync(BlogPost.BlogPostId);
-
-			var blogCommentsViewModel = new List<BlogComment>();
-
-			foreach (var blogPostComment in blogPostComments)
-			{
-				blogCommentsViewModel.Add( new BlogComment 
-				{
-					DateAdded = blogPostComment.DateAdded,
-					Description = blogPostComment.Description,
-					UserName = (await _userManager.FindByIdAsync(blogPostComment.UserId.ToString())).UserName,
-				});
-			}
-
-			Comments = blogCommentsViewModel;
 		}
 	}
 }
